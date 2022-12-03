@@ -1,23 +1,41 @@
 let productItems = document.getElementById("items");
 
-fetch("http://localhost:3000/api/products")
+/**
+ * Display products on the homepage
+ * @param {array}
+ * @return {HTMLElement}
+ */
+
+function displayProducts(array) {
+    for (let i = 0; i < array.length; i++) {
+        productItems.innerHTML += `
+        <a href="./product.html?id=${array[i]._id}">
+            <article>
+                <img src="${array[i].imageUrl}" alt="${array[i].altTxt}">
+                <h3 class="productName">${array[i].name}</h3>
+                <p class="productDescription">${array[i].description}</p>
+            </article>
+        </a>`;
+    }
+}
+
+/**
+ * Retrieve data from the api and call the displayProduct function
+ * @param {url}
+ * @return {promise}
+ */
+
+let promise = fetch("http://localhost:3000/api/products")
     .then(function(res) {
         if (res.ok) {
             return res.json();
         }
     })
     .then(function(value) {
-        for (let i = 0; i < value.length; i++) {
-            productItems.innerHTML += `
-            <a href="./product.html?id=${value[i]._id}">
-                <article>
-                    <img src="${value[i].imageUrl}" alt="${value[i].altTxt}">
-                    <h3 class="productName">${value[i].name}</h3>
-                    <p class="productDescription">${value[i].description}</p>
-                </article>
-            </a>`;
-        }                       
+        displayProducts(value);
+                    
     })
     .catch(function(err) {
-        // Une erreur est survenue
+        console.log(error)
     });
+
