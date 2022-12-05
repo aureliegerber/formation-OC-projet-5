@@ -20,7 +20,7 @@ function displayProducts(array) {
 }
 
 /**
- * Retrieve data from the api and call the displayProduct function
+ * Retrieve data from the api and call the displayProducts function
  * @param {url}
  * @return {promise}
  */
@@ -36,6 +36,6 @@ let promise = fetch("http://localhost:3000/api/products")
                     
     })
     .catch(function(err) {
-        console.log(error)
+        console.log("error")
     });
 

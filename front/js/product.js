@@ -1,0 +1,75 @@
+let url = new URLSearchParams(window.location.search);
+let productId = url.get("id");
+let itemImg = document.getElementsByClassName("item__img");
+let itemContentTitle = document.getElementById("title");
+let itemContentPrice = document.getElementById("price");
+let itemContentDescription = document.getElementById("description");
+let itemContentSettingsColor = document.getElementById("colors");
+
+/**
+ * Display product details
+ * @param {array}
+ * @return {HTMLElement}
+ */
+
+function displayProduct(array) {
+    for (let i = 0; i < array.length; i++) {
+        if (array[i]._id === productId) {
+            itemImg[0].innerHTML = `<img src="${array[i].imageUrl}" alt="${array[i].altTxt}">`;
+            itemContentTitle.textContent = array[i].name;
+            itemContentPrice.textContent = array[i].price;
+            itemContentDescription.textContent = array[i].description;
+            for (let j = 0; j < array[i].colors.length; j++) {
+                itemContentSettingsColor.innerHTML += `
+                <option value="${array[i].colors[j]}">${array[i].colors[j]}</option>`
+            }             
+        }
+    }
+}
+
+/**
+ * Retrieve data from the api and call the displayProduct function
+ * @param {url}
+ * @return {promise}
+ */
+
+let promise = fetch("http://localhost:3000/api/products")
+    .then(function(res) {
+        if (res.ok) {
+            return res.json();
+        }
+    })
+    .then(function(value) {
+        displayProduct(value);
+                    
+    })
+    .catch(function(err) {
+        console.log("error")
+    });
+
+let cart = [];
+let cartButton = document.getElementById("addToCart");
+cartButton.addEventListener("click", function() {
+    let productQuantity = parseInt(document.getElementById("quantity").value);
+    console.log(productQuantity);
+    let productColor = document.getElementById("colors").value;
+    console.log(productColor);
+    if (cart.length == 0) {
+        cart.push(productId, productQuantity, productColor);
+    } else {
+        if (cart.indexOf(productId) == -1) {
+            cart.push(productId, productQuantity, productColor);
+        } else {
+            if (cart.indexOf(productColor) == -1) {
+                cart.push(productQuantity, productColor)
+            } else {
+                cart[cart.indexOf(productColor) - 1] += productQuantity;
+            }
+        }        
+    }
+    console.log(cart);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    let storedCart = JSON.parse(localStorage.getItem("cart"));
+    console.log(storedCart);
+})
+
