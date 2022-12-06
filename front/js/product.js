@@ -1,6 +1,6 @@
 let url = new URLSearchParams(window.location.search);
 let productId = url.get("id");
-let itemImg = document.getElementsByClassName("item__img");
+let itemImg = document.querySelector(".item__img");
 let itemContentTitle = document.getElementById("title");
 let itemContentPrice = document.getElementById("price");
 let itemContentDescription = document.getElementById("description");
@@ -15,7 +15,7 @@ let itemContentSettingsColor = document.getElementById("colors");
 function displayProduct(array) {
     for (let i = 0; i < array.length; i++) {
         if (array[i]._id === productId) {
-            itemImg[0].innerHTML = `<img src="${array[i].imageUrl}" alt="${array[i].altTxt}">`;
+            itemImg.innerHTML = `<img src="${array[i].imageUrl}" alt="${array[i].altTxt}">`;
             itemContentTitle.textContent = array[i].name;
             itemContentPrice.textContent = array[i].price;
             itemContentDescription.textContent = array[i].description;
