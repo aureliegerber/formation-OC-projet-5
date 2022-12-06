@@ -48,28 +48,39 @@ let promise = fetch("http://localhost:3000/api/products")
     });
 
 let cart = [];
+let storedCart = JSON.parse(localStorage.getItem("cart"));   
 let cartButton = document.getElementById("addToCart");
-cartButton.addEventListener("click", function() {
+
+/**
+ * Fill the cart
+ * @param none
+ * @return {object}
+ */
+
+function fillCart() {
+    if (storedCart !== null) {
+        cart = storedCart;
+    }
     let productQuantity = parseInt(document.getElementById("quantity").value);
     console.log(productQuantity);
     let productColor = document.getElementById("colors").value;
     console.log(productColor);
-    if (cart.length == 0) {
+    if (cart.indexOf(productId) == -1) {
         cart.push(productId, productQuantity, productColor);
     } else {
-        if (cart.indexOf(productId) == -1) {
-            cart.push(productId, productQuantity, productColor);
+        if (cart.indexOf(productColor) == -1) {
+            cart.push(productQuantity, productColor)
         } else {
-            if (cart.indexOf(productColor) == -1) {
-                cart.push(productQuantity, productColor)
-            } else {
-                cart[cart.indexOf(productColor) - 1] += productQuantity;
-            }
-        }        
+            cart[cart.indexOf(productColor) - 1] += productQuantity;
+        }
     }
-    console.log(cart);
     localStorage.setItem("cart", JSON.stringify(cart));
-    let storedCart = JSON.parse(localStorage.getItem("cart"));
+    storedCart = JSON.parse(localStorage.getItem("cart"));
+    document.location.reload();
+
     console.log(storedCart);
-})
+
+}
+
+cartButton.addEventListener("click", fillCart);
 
