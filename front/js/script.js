@@ -32,8 +32,7 @@ let promise = fetch("http://localhost:3000/api/products")
         }
     })
     .then(function(value) {
-        displayProducts(value);
-                    
+        displayProducts(value);                    
     })
     .catch(function(err) {
         console.log("error")
