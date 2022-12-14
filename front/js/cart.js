@@ -3,14 +3,15 @@ console.log(storedCart);
 let cartItems = document.getElementById("cart__items");
 let totalQuantitySpan = document.getElementById("totalQuantity");
 let totalPriceSpan = document.getElementById("totalPrice");
-let productsArray;
+let productsArray = [];
+let titre1 = document.querySelector("h1");
 
 
 fetch("http://localhost:3000/api/products")
     .then(function(res) {
-        if (res.ok) {
-          return res.json();
-        }
+      if (res.ok) {
+        return res.json();
+      }
     })
     .then(function(value) {
       total();
@@ -226,56 +227,192 @@ let emailErrorMsg = document.getElementById("emailErrorMsg");
 
 const regExpNameCity = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]{2,40}$/;
 const regExpAddress = /[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð0-9 ,.'-]{5,50}$/;
+const regExpEmail = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/;
 
 
-function validInputForm(toListen, regExp) {
+/******************* QUESTION CLEMENT *************************/
+/* function validInputForm(toListen, regExp) {
   toListen.addEventListener("change", function(e) {
-    console.log(regExp.test(e.target.value));
     return regExp.test(e.target.value);
   })
 }
 
-let firstNameIsValid = validInputForm(firstName, regExpNameCity);
-let lastNameIsValid = validInputForm(lastName, regExpNameCity);
-let cityIsValid = validInputForm(city, regExpNameCity);
-let addressIsValid = validInputForm(address, regExpAddress);
-
 function validForm() {
-  console.log(firstNameIsValid);
-  if (firstNameIsValid) {
+    if (validInputForm(firstName, regExpNameCity)) {
+    firstNameErrorMsg.innerHTML = "";
+  } else {
     firstNameErrorMsg.innerHTML = "Le prénom doit comporter au moins 2 lettres et ne pas contenir de chiffre";
   }
-  if (lastNameIsValid) {
+
+  if (validInputForm(lastName, regExpNameCity)) {
+    lastNameErrorMsg.innerHTML = "";
+  } else {
     lastNameErrorMsg.innerHTML = "Le nom doit comporter au moins 2 lettres et ne pas contenir de chiffre";
   }
-  if (cityIsValid) {
-    cityErrorMsg.innerHTML = "Le nom doit comporter au moins 2 lettres et ne pas contenir de chiffre";
-  }
-  if (addressIsValid) {
+
+  if (validInputForm(address, regExpAddress)) {
+    addressErrorMsg.innerHTML = "";
+  } else {
     addressErrorMsg.innerHTML = "L'adresse doit contenir au moins 5 caractères";
-  } 
+  }
+
+  if (validInputForm(city, regExpNameCity)) {
+    cityErrorMsg.innerHTML = "";
+  } else {
+    cityErrorMsg.innerHTML = "La ville doit comporter au moins 2 lettres et ne pas contenir de chiffre";
+  }
+
+  if (validInputForm(email, regExpEmail)) {
+    emailErrorMsg.innerHTML = "";
+  } else {
+    emailErrorMsg.innerHTML = "Veuillez saisir un email valide";
+  }
 }
 
+************** AUTRE IDEE ************
+
+let boolean;
+
+function validInputFirstName() {
+  firstName.addEventListener("change", function(e) {
+    boolean = regExpNameCity.test(e.target.value);
+    return regExpNameCity.test(e.target.value);
+  })
+}
+
+validInputFirstName();
+console.log(boolean);
+
+
+/******************* QUESTION CLEMENT *************************/
+
+let validations = 0;
+
+function firstNameIsValid() {
+  firstName.addEventListener("change", function(e) {
+    if(regExpNameCity.test(e.target.value)) {
+      firstNameErrorMsg.innerHTML = "";
+      validations += 1;
+    } else {
+      firstNameErrorMsg.innerHTML = "Le prénom doit comporter au moins 2 lettres et ne pas contenir de chiffre";      
+    }
+  })
+}
+
+firstNameIsValid();
+
+function lastNameIsValid() {
+  lastName.addEventListener("change", function(e) {
+    if(regExpNameCity.test(e.target.value)) {
+      lastNameErrorMsg.innerHTML = "";
+      validations += 1;
+    } else {
+      lastNameErrorMsg.innerHTML = "Le nom doit comporter au moins 2 lettres et ne pas contenir de chiffre";
+    }
+  })
+}
+
+lastNameIsValid();
+
+
+function addressIsValid() {
+  address.addEventListener("change", function(e) {
+    if(regExpAddress.test(e.target.value)) {
+      addressErrorMsg.innerHTML = "";
+      validations += 1;
+    } else {
+      addressErrorMsg.innerHTML = "L'adresse doit contenir au moins 5 caractères";
+    }
+  })
+}
+
+addressIsValid();
+
+function cityIsValid() {
+  city.addEventListener("change", function(e) {
+    if(regExpNameCity.test(e.target.value)) {
+      cityErrorMsg.innerHTML = "";
+      validations += 1;
+    } else {
+      cityErrorMsg.innerHTML = "La ville doit comporter au moins 2 lettres et ne pas contenir de chiffre";
+    }
+  })
+}
+
+cityIsValid();
+
+function emailIsValid() {
+  email.addEventListener("change", function(e) {
+    if(regExpEmail.test(e.target.value)) {
+      emailErrorMsg.innerHTML = "";
+      validations += 1;
+    } else {
+      emailErrorMsg.innerHTML = "Veuillez saisir un email valide";
+    }
+  })
+}
+
+emailIsValid();
+
+let contact;
 
 function createContact() {
-  let contact = {
+  contact = {
     firstName: firstName.value,
     lastName: lastName.value,
     address: address.value,
     city: city.value,
     email: email.value
-  };
-  console.log(contact);
+  }  
 }
+
+
 
 function command() {
   orderCommand.addEventListener("click", function(e) {
-    
-    validForm();    
-  });
+    e.preventDefault();
+    if (storedCart == null) {
+      titre1.innerHTML = "Votre panier est vide !"
+    } else {
+      if (validations == 5) {
+        createContact();
+        console.log(contact);
+        let init = {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contact: contact,
+            products: productsArray,
+          })
+        }
+        fetch("http://localhost:3000/api/products/order", init)
+          .then(function(res) {
+            if (res.ok) {
+              return res.json();
+            }
+          })
+          .then(function(value) {
+            localStorage.clear();
+            window.location.assign("confirmation.html?id=" + value.orderId);
+          })
+          .catch(function(err) {
+            console.log(err);
+          })     
+      }
+    }
+  })
 }
 
 command();
 
+for (let item of storedCart) {
+  if (item.length > 10) {
+    productsArray.push(item);
+  }  
+}
 
+console.log(productsArray);
 
