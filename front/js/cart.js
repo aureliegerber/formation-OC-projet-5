@@ -1,11 +1,16 @@
 let storedCart = JSON.parse(localStorage.getItem("cart"));
-console.log(storedCart);
 let cartItems = document.getElementById("cart__items");
 let totalQuantitySpan = document.getElementById("totalQuantity");
 let totalPriceSpan = document.getElementById("totalPrice");
 let productsArray = [];
 let titre1 = document.querySelector("h1");
 
+
+/**
+ * Contact the API and start the total, displayCart, modifyQuantity and deleteProduct functions
+ * @param {url}
+ * @return {undefined}
+ */
 
 fetch("http://localhost:3000/api/products")
     .then(function(res) {
@@ -25,7 +30,7 @@ fetch("http://localhost:3000/api/products")
 
 
 /**
- * Display product details
+ * Display the product details in the DOM
  * @param {array}
  * @return {undefined}
  */
@@ -33,7 +38,7 @@ fetch("http://localhost:3000/api/products")
 function displayCart(array) {  
   for (let i = 0; i < array.length; i++) {
     let matchId = storedCart.indexOf(array[i]._id);        
-    if (matchId !== -1) { // si un identifiant est trouvé dans le storedCart
+    if (matchId !== -1) { // if an identifier is found in the storedCart
       let j = 1;
       while (!isNaN(storedCart[matchId + j])) {
         cartItems.innerHTML += `
@@ -91,18 +96,14 @@ function modifyQuantity() {
     console.log(newQuantity);
     let article = inputQuantity[i].closest("article");
     let dataId = article.getAttribute("data-id");
-    let dataColor = article.getAttribute("data-color");
-    console.log(dataId);
-    console.log(dataColor);
-    console.log(storedCart);
+    let dataColor = article.getAttribute("data-color");    
     for (let j = 0; j < storedCart.length; j++) {
       if (storedCart[j] == dataId) {
         let k = 1;
         while (!isNaN(storedCart[j + k])) {
           if (storedCart[j + k + 1] == dataColor) {
             console.log("yes");
-            storedCart[j + k] = newQuantity;
-            console.log(storedCart);
+            storedCart[j + k] = newQuantity;            
           }
           k += 2;
         }        
@@ -127,20 +128,15 @@ function deleteProduct() {
     deleteClick[i].addEventListener("click", function(e) {
     let article = deleteClick[i].closest("article");
     let dataId = article.getAttribute("data-id");
-    let dataColor = article.getAttribute("data-color");
-    console.log(dataId);
-    console.log(dataColor);
-    console.log(storedCart);
+    let dataColor = article.getAttribute("data-color");    
     for (let j = 0; j < storedCart.length; j++) {         
       if (storedCart[j] == dataId) {
         let k = 1;
         while (!isNaN(storedCart[j + k])) {
-          if (storedCart[j + k + 1] == dataColor) {
-            console.log("yes");
+          if (storedCart[j + k + 1] == dataColor) {            
             storedCart.splice(j + k, 2);
             article.remove();
-            cleanCart(); 
-            console.log(storedCart);                  
+            cleanCart();                              
           }
           k += 2;          
         }              
@@ -202,7 +198,7 @@ async function total() {
             }            
           })
           .catch(function(err) {
-              console.log(err);
+            console.log(err);
           });
       }
       totalQuantity += productTotalQuantity;                         
@@ -229,132 +225,119 @@ const regExpNameCity = /^[a-zA-Zàáâäãåąčćęèéêëėįìíîïłńòó
 const regExpAddress = /[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð0-9 ,.'-]{5,50}$/;
 const regExpEmail = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/;
 
+let inputForm1 = 0;
+let inputForm2 = 0;
+let inputForm3 = 0;
+let inputForm4 = 0;
+let inputForm5 = 0;
 
-/******************* QUESTION CLEMENT *************************/
-/* function validInputForm(toListen, regExp) {
-  toListen.addEventListener("change", function(e) {
-    return regExp.test(e.target.value);
-  })
-}
-
-function validForm() {
-    if (validInputForm(firstName, regExpNameCity)) {
-    firstNameErrorMsg.innerHTML = "";
-  } else {
-    firstNameErrorMsg.innerHTML = "Le prénom doit comporter au moins 2 lettres et ne pas contenir de chiffre";
-  }
-
-  if (validInputForm(lastName, regExpNameCity)) {
-    lastNameErrorMsg.innerHTML = "";
-  } else {
-    lastNameErrorMsg.innerHTML = "Le nom doit comporter au moins 2 lettres et ne pas contenir de chiffre";
-  }
-
-  if (validInputForm(address, regExpAddress)) {
-    addressErrorMsg.innerHTML = "";
-  } else {
-    addressErrorMsg.innerHTML = "L'adresse doit contenir au moins 5 caractères";
-  }
-
-  if (validInputForm(city, regExpNameCity)) {
-    cityErrorMsg.innerHTML = "";
-  } else {
-    cityErrorMsg.innerHTML = "La ville doit comporter au moins 2 lettres et ne pas contenir de chiffre";
-  }
-
-  if (validInputForm(email, regExpEmail)) {
-    emailErrorMsg.innerHTML = "";
-  } else {
-    emailErrorMsg.innerHTML = "Veuillez saisir un email valide";
-  }
-}
-
-************** AUTRE IDEE ************
-
-let boolean;
-
-function validInputFirstName() {
-  firstName.addEventListener("change", function(e) {
-    boolean = regExpNameCity.test(e.target.value);
-    return regExpNameCity.test(e.target.value);
-  })
-}
-
-validInputFirstName();
-console.log(boolean);
-
-
-/******************* QUESTION CLEMENT *************************/
-
-let validations = 0;
+/**
+ * Check if the first name is valid and display an error message in the DOM if not
+ * @param none
+ * @return {undefined}
+ */
 
 function firstNameIsValid() {
   firstName.addEventListener("change", function(e) {
     if(regExpNameCity.test(e.target.value)) {
       firstNameErrorMsg.innerHTML = "";
-      validations += 1;
+      inputForm1 = 1;
     } else {
-      firstNameErrorMsg.innerHTML = "Le prénom doit comporter au moins 2 lettres et ne pas contenir de chiffre";      
-    }
+      firstNameErrorMsg.innerHTML = "Le prénom doit comporter au moins 2 lettres et ne pas contenir de chiffre";
+      inputForm1 = 0;     
+    }    
   })
 }
 
 firstNameIsValid();
 
+/**
+ * Check if the last name is valid and display an error message in the DOM if not
+ * @param none
+ * @return {undefined}
+ */
+
 function lastNameIsValid() {
   lastName.addEventListener("change", function(e) {
     if(regExpNameCity.test(e.target.value)) {
       lastNameErrorMsg.innerHTML = "";
-      validations += 1;
+      inputForm2 = 1;
     } else {
       lastNameErrorMsg.innerHTML = "Le nom doit comporter au moins 2 lettres et ne pas contenir de chiffre";
-    }
+      inputForm2 = 0;  
+    }    
   })
 }
 
 lastNameIsValid();
 
+/**
+ * Check if the address is valid and display an error message in the DOM if not
+ * @param none
+ * @return {undefined}
+ */
 
 function addressIsValid() {
   address.addEventListener("change", function(e) {
     if(regExpAddress.test(e.target.value)) {
       addressErrorMsg.innerHTML = "";
-      validations += 1;
+      inputForm3 = 1;
     } else {
       addressErrorMsg.innerHTML = "L'adresse doit contenir au moins 5 caractères";
-    }
+      inputForm3 = 0;  
+    }    
   })
 }
 
 addressIsValid();
 
+/**
+ * Check if the city is valid and display an error message in the DOM if not
+ * @param none
+ * @return {undefined}
+ */
+
 function cityIsValid() {
   city.addEventListener("change", function(e) {
     if(regExpNameCity.test(e.target.value)) {
       cityErrorMsg.innerHTML = "";
-      validations += 1;
+      inputForm4 = 1;
     } else {
       cityErrorMsg.innerHTML = "La ville doit comporter au moins 2 lettres et ne pas contenir de chiffre";
-    }
+      inputForm4 = 0;
+    }    
   })
 }
 
 cityIsValid();
 
+/**
+ * Check if the email is valid and display an error message in the DOM if not
+ * @param none
+ * @return {undefined}
+ */
+
 function emailIsValid() {
   email.addEventListener("change", function(e) {
     if(regExpEmail.test(e.target.value)) {
       emailErrorMsg.innerHTML = "";
-      validations += 1;
+      inputForm5 = 1;
     } else {
       emailErrorMsg.innerHTML = "Veuillez saisir un email valide";
-    }
+      inputForm5 = 0;  
+    }    
   })
 }
 
 emailIsValid();
 
 let contact;
+
+/**
+ * Create a contact object
+ * @param none
+ * @return {undefined}
+ */
 
 function createContact() {
   contact = {
@@ -366,7 +349,13 @@ function createContact() {
   }  
 }
 
-
+/**
+ * Make a post request on the API
+ * Retrieve the command ID
+ * Redirect the user to the confirmation page by passing the order id in the url
+ * @param none
+ * @return {undefined}
+ */
 
 function command() {
   orderCommand.addEventListener("click", function(e) {
@@ -374,9 +363,8 @@ function command() {
     if (storedCart == null) {
       titre1.innerHTML = "Votre panier est vide !"
     } else {
-      if (validations == 5) {
-        createContact();
-        console.log(contact);
+      if (inputForm1*inputForm2*inputForm3*inputForm4*inputForm5 == 1) {
+        createContact();        
         let init = {
           method: "POST",
           headers: {
@@ -413,6 +401,3 @@ for (let item of storedCart) {
     productsArray.push(item);
   }  
 }
-
-console.log(productsArray);
-

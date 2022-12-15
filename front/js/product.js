@@ -101,17 +101,12 @@ function fillCart() {
             } else {
                 cart[i + 1 + 2*arrayColor.indexOf(productColor)] += productQuantity;
             }
-        }          
-        console.log(cart);
-            
-        }
+        }       
+    }
         localStorage.setItem("cart", JSON.stringify(cart));
         storedCart = JSON.parse(localStorage.getItem("cart"));
         alert("L'article a été ajouté au panier");
-    }
-
-
-
+}
 
 let cartButton = document.getElementById("addToCart");
 cartButton.addEventListener("click", fillCart);
