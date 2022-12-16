@@ -89,8 +89,7 @@ function fillCart() {
     
     if (productColor !== "" && productQuantity > 0 && productQuantity <= 100) {
         if (cart.indexOf(productId) == -1) {  // if the product ID is not in storedCart
-            cart.push(productId, productQuantity, productColor);
-            console.log(cart);
+            cart.push(productId, productQuantity, productColor);            
         } else {  // if the product ID is in storedCart          
             let i = cart.indexOf(productId);
             let j = 1;

@@ -5,7 +5,6 @@ let totalPriceSpan = document.getElementById("totalPrice");
 let productsArray = [];
 let titre1 = document.querySelector("h1");
 
-
 /**
  * Contact the API and start the total, displayCart, modifyQuantity and deleteProduct functions
  * @param {url}
@@ -19,10 +18,14 @@ fetch("http://localhost:3000/api/products")
       }
     })
     .then(function(value) {
-      total();
+      if (storedCart == null) {
+        titre1.innerHTML = "Votre panier est vide !";
+        total();
+    } else {      
       displayCart(value);
       modifyQuantity();
-      deleteProduct();      
+      deleteProduct();
+    }
     })
     .catch(function(err) {
         console.log(err);
@@ -363,6 +366,11 @@ function command() {
     if (storedCart == null) {
       titre1.innerHTML = "Votre panier est vide !"
     } else {
+      for (let item of storedCart) {
+        if (item.length > 10) {
+          productsArray.push(item);
+        }  
+      }
       if (inputForm1*inputForm2*inputForm3*inputForm4*inputForm5 == 1) {
         createContact();        
         let init = {
@@ -396,8 +404,3 @@ function command() {
 
 command();
 
-for (let item of storedCart) {
-  if (item.length > 10) {
-    productsArray.push(item);
-  }  
-}
