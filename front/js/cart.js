@@ -25,6 +25,7 @@ fetch("http://localhost:3000/api/products")
       displayCart(value);
       modifyQuantity();
       deleteProduct();
+      total();
     }
     })
     .catch(function(err) {
@@ -40,35 +41,34 @@ fetch("http://localhost:3000/api/products")
 
 function displayCart(array) {  
   for (let i = 0; i < array.length; i++) {
-    let matchId = storedCart.indexOf(array[i]._id);        
-    if (matchId !== -1) { // if an identifier is found in the storedCart
-      let j = 1;
-      while (!isNaN(storedCart[matchId + j])) {
-        cartItems.innerHTML += `
-        <article class="cart__item" data-id="${array[i]._id}" data-color="${storedCart[matchId + j + 1]}">
-                <div class="cart__item__img">
-                  <img src="${array[i].imageUrl}" alt="${array[i].altTxt}">
-                </div>
-                <div class="cart__item__content">
-                  <div class="cart__item__content__description">
-                    <h2>${array[i].name}</h2>
-                    <p>${storedCart[matchId + j + 1]}</p>
-                    <p>${array[i].price} €</p>
+    for (let j = 0; j < storedCart.length; j++) {
+      if (storedCart[j][0] == array[i]._id) {  // if an identifier is found in the storedCart
+        for (let k = 1; k <= (storedCart[j].length - 1)/2; k++) {
+          cartItems.innerHTML += `
+          <article class="cart__item" data-id="${array[i]._id}" data-color="${storedCart[j][2*k]}">
+                  <div class="cart__item__img">
+                    <img src="${array[i].imageUrl}" alt="${array[i].altTxt}">
                   </div>
-                  <div class="cart__item__content__settings">
-                    <div class="cart__item__content__settings__quantity">
-                      <p>Qté : </p>
-                      <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${storedCart[matchId + j]}">
+                  <div class="cart__item__content">
+                    <div class="cart__item__content__description">
+                      <h2>${array[i].name}</h2>
+                      <p>${storedCart[j][2*k]}</p>
+                      <p>${array[i].price} €</p>
                     </div>
-                    <div class="cart__item__content__settings__delete">
-                      <p class="deleteItem">Supprimer</p>
+                    <div class="cart__item__content__settings">
+                      <div class="cart__item__content__settings__quantity">
+                        <p>Qté : </p>
+                        <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${storedCart[j][2*k - 1]}">
+                      </div>
+                      <div class="cart__item__content__settings__delete">
+                        <p class="deleteItem">Supprimer</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-        </article>`;
-        j += 2;              
+          </article>`;
+        }
       }
-    }
+    }    
   }
 }
 
@@ -91,25 +91,20 @@ function modifyLocalStorage() {
 
 
 function modifyQuantity() {
-  let inputQuantity = document.querySelectorAll(".itemQuantity");
-  console.log(inputQuantity);
+  let inputQuantity = document.querySelectorAll(".itemQuantity");  
   for (let i = 0; i < inputQuantity.length; i++) {
     inputQuantity[i].addEventListener("change", function(e) {
-    let newQuantity = e.target.value;
-    console.log(newQuantity);
+    let newQuantity = e.target.value;    
     let article = inputQuantity[i].closest("article");
     let dataId = article.getAttribute("data-id");
     let dataColor = article.getAttribute("data-color");    
     for (let j = 0; j < storedCart.length; j++) {
-      if (storedCart[j] == dataId) {
-        let k = 1;
-        while (!isNaN(storedCart[j + k])) {
-          if (storedCart[j + k + 1] == dataColor) {
-            console.log("yes");
-            storedCart[j + k] = newQuantity;            
+      if (storedCart[j][0] == dataId) {
+        for (let k = 1; k <= (storedCart[j].length - 1)/2; k++) {
+          if (storedCart[j][2*k] == dataColor) {
+            storedCart[j][2*k - 1] = newQuantity;
           }
-          k += 2;
-        }        
+        }
       }
     }
     modifyLocalStorage();
@@ -125,45 +120,43 @@ function modifyQuantity() {
  */
 
 function deleteProduct() {
-  let deleteClick = document.querySelectorAll(".deleteItem");
-  console.log(deleteClick);  
+  let deleteClick = document.querySelectorAll(".deleteItem");  
   for (let i = 0; i < deleteClick.length; i++) {
     deleteClick[i].addEventListener("click", function(e) {
-    let article = deleteClick[i].closest("article");
-    let dataId = article.getAttribute("data-id");
-    let dataColor = article.getAttribute("data-color");    
-    for (let j = 0; j < storedCart.length; j++) {         
-      if (storedCart[j] == dataId) {
-        let k = 1;
-        while (!isNaN(storedCart[j + k])) {
-          if (storedCart[j + k + 1] == dataColor) {            
-            storedCart.splice(j + k, 2);
-            article.remove();
-            cleanCart();                              
+      let article = deleteClick[i].closest("article");
+      let dataId = article.getAttribute("data-id");
+      let dataColor = article.getAttribute("data-color");    
+      for (let j = 0; j < storedCart.length; j++) {         
+        if (storedCart[j][0] == dataId) {
+          for (let k = 1; k <= (storedCart[j].length - 1)/2; k++) {
+            if (storedCart[j][2*k] == dataColor) {
+              storedCart[j].splice(2*k - 1, 2);
+              article.remove();              
+            }
           }
-          k += 2;          
-        }              
+        }
       }
-    }
-    modifyLocalStorage();
-    total();
+      cleanCart();
+      modifyLocalStorage();      
+      total();
     })    
   }
 }
 
 /**
- * Remove from the cart identifiers that have no quantity or color
+ * Remove from the cart identifiers that have no quantity/color
  * @param none
  * @return {undefined}
  */
 
 function cleanCart() {
   for (let i = 0; i < storedCart.length; i++) {
-    if (storedCart[i].length > 10 && isNaN(storedCart[i + 1])) {
+    if (storedCart[i].length == 1) {
       storedCart.splice(i, 1);
     }
   }
 }
+
 
 /**
  * Calculate total quantity and total price and display in the DOM
@@ -180,35 +173,34 @@ async function total() {
   } else {
     for (let i = 0; i < storedCart.length; i++) {
       let productTotalQuantity = 0;
-      let productTotalPrice = 0;         
-      if (storedCart[i].length > 10) {
-        await fetch("http://localhost:3000/api/products")
+      let productTotalPrice = 0;
+      await fetch("http://localhost:3000/api/products")
           .then(function(res) {
             if (res.ok) {
                 return res.json();
             }
           })
           .then(function(value) {                
-            for (let k = 0; k < value.length; k++) {
-              if (value[k]._id == storedCart[i]) {
-                let j = 1;                
-                while(!isNaN(storedCart[i + j])) {
-                  productTotalQuantity += parseInt(storedCart[i + j]);                                  
-                  j += 2;
-                }
-                productTotalPrice = productTotalQuantity*(value[k].price);                        
+            for (let j = 0; j < value.length; j++) {
+              if (value[j]._id == storedCart[i][0]) {
+                for (let k = 1; k <= (storedCart[i].length - 1)/2; k++) {
+                  productTotalQuantity += parseInt(storedCart[i][2*k - 1]);
+                  console.log(productTotalQuantity);                  
+                };                
+                productTotalPrice = productTotalQuantity*(value[j].price);
+                console.log(productTotalPrice);                       
               }              
             }            
           })
           .catch(function(err) {
             console.log(err);
           });
-      }
-      totalQuantity += productTotalQuantity;                         
-      totalPrice += productTotalPrice;              
-      totalQuantitySpan.innerHTML = totalQuantity;
-      totalPriceSpan.innerHTML = totalPrice;
-    }    
+
+          totalQuantity += productTotalQuantity;                         
+          totalPrice += productTotalPrice;              
+          totalQuantitySpan.innerHTML = totalQuantity;
+          totalPriceSpan.innerHTML = totalPrice;
+      }  
   }
 }
   

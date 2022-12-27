@@ -77,32 +77,37 @@ function checkInput(color, quantity) {
  * @return {undefined}
  */
 
-function fillCart() {    
+function fillCart() {
     if (storedCart !== null) {
-        cart = storedCart;        
+        cart = storedCart;
     }
+
     let productQuantity = parseInt(document.getElementById("quantity").value);
     let productColor = document.getElementById("colors").value;
-    let arrayColor = [];  
-    
-    checkInput(productColor, productQuantity);
+    let boolean = false;
+
+    checkInput(productColor, productQuantity);    
     
     if (productColor !== "" && productQuantity > 0 && productQuantity <= 100) {
-        if (cart.indexOf(productId) == -1) {  // if the product ID is not in storedCart
-            cart.push(productId, productQuantity, productColor);            
-        } else {  // if the product ID is in storedCart          
-            let i = cart.indexOf(productId);
-            let j = 1;
-            while (!isNaN(cart[i + j])) {
-                arrayColor.push(cart[i + j + 1]);                
-                j += 2;
-            };
-            if (arrayColor.indexOf(productColor) == -1) {
-                cart.splice(i + j, 0, productQuantity, productColor);
-            } else {
-                cart[i + 1 + 2*arrayColor.indexOf(productColor)] += productQuantity;
+        if (cart.length == 0) {
+            cart[0] = [productId, productQuantity, productColor];
+        } else {
+            for (let i = 0; i < cart.length; i++) {
+                if (cart[i][0] == productId) {
+                    boolean = true;
+                    if (cart[i].indexOf(productColor) !== -1) {
+                        let j = cart[i].indexOf(productColor);
+                        cart[i][j - 1] += productQuantity;
+                    } else {
+                        cart[i].push(productQuantity, productColor);
+                    }
+                }
             }
-        }       
+            if (boolean == false) {
+                cart[cart.length] = [productId, productQuantity, productColor];
+            }  
+        }
+            
         localStorage.setItem("cart", JSON.stringify(cart));
         storedCart = JSON.parse(localStorage.getItem("cart"));
         alert("L'article a été ajouté au panier");
