@@ -3,7 +3,7 @@ let productItems = document.getElementById("items");
 /**
  * Display products on the homepage
  * @param {array}
- * @return {HTMLElement}
+ * @return {undefined}
  */
 
 function displayProducts(array) {
