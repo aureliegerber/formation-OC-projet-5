@@ -89,26 +89,30 @@ function modifyLocalStorage() {
  * @return {undefined}
  */
 
-
 function modifyQuantity() {
   let inputQuantity = document.querySelectorAll(".itemQuantity");  
   for (let i = 0; i < inputQuantity.length; i++) {
     inputQuantity[i].addEventListener("change", function(e) {
-    let newQuantity = e.target.value;    
-    let article = inputQuantity[i].closest("article");
-    let dataId = article.getAttribute("data-id");
-    let dataColor = article.getAttribute("data-color");    
-    for (let j = 0; j < storedCart.length; j++) {
-      if (storedCart[j][0] == dataId) {
-        for (let k = 1; k <= (storedCart[j].length - 1)/2; k++) {
-          if (storedCart[j][2*k] == dataColor) {
-            storedCart[j][2*k - 1] = newQuantity;
+      let newQuantity = e.target.value;
+      let article = inputQuantity[i].closest("article");
+      let dataId = article.getAttribute("data-id");
+      let dataColor = article.getAttribute("data-color");    
+      for (let j = 0; j < storedCart.length; j++) {
+        if (storedCart[j][0] == dataId) {
+          for (let k = 1; k <= (storedCart[j].length - 1)/2; k++) {
+            if (storedCart[j][2*k] == dataColor) {
+              if (newQuantity <= 100) {
+                storedCart[j][2*k - 1] = newQuantity;
+                modifyLocalStorage();
+                total();
+              } else {
+                alert("La quantité totale d'un article ne doit pas dépasser 100");
+                e.target.value = storedCart[j][2*k - 1];
+              }
+            }
           }
         }
-      }
-    }
-    modifyLocalStorage();
-    total();
+      }      
     })
   }
 }
