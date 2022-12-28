@@ -1,4 +1,4 @@
-let productItems = document.getElementById("items");
+const productItems = document.getElementById("items");
 
 /**
  * Display products on the homepage

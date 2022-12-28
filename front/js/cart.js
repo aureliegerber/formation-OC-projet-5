@@ -1,9 +1,9 @@
 let storedCart = JSON.parse(localStorage.getItem("cart"));
-let cartItems = document.getElementById("cart__items");
-let totalQuantitySpan = document.getElementById("totalQuantity");
-let totalPriceSpan = document.getElementById("totalPrice");
-let productsArray = [];
-let titre1 = document.querySelector("h1");
+const cartItems = document.getElementById("cart__items");
+const totalQuantitySpan = document.getElementById("totalQuantity");
+const totalPriceSpan = document.getElementById("totalPrice");
+const productsArray = [];
+const titre1 = document.querySelector("h1");
 
 /**
  * Contact the API and start the total, displayCart, modifyQuantity and deleteProduct functions
@@ -90,13 +90,13 @@ function modifyLocalStorage() {
  */
 
 function modifyQuantity() {
-  let inputQuantity = document.querySelectorAll(".itemQuantity");  
+  const inputQuantity = document.querySelectorAll(".itemQuantity");  
   for (let i = 0; i < inputQuantity.length; i++) {
     inputQuantity[i].addEventListener("change", function(e) {
-      let newQuantity = e.target.value;
-      let article = inputQuantity[i].closest("article");
-      let dataId = article.getAttribute("data-id");
-      let dataColor = article.getAttribute("data-color");    
+      const newQuantity = e.target.value;
+      const article = inputQuantity[i].closest("article");
+      const dataId = article.getAttribute("data-id");
+      const dataColor = article.getAttribute("data-color");    
       for (let j = 0; j < storedCart.length; j++) {
         if (storedCart[j][0] == dataId) {
           for (let k = 1; k <= (storedCart[j].length - 1)/2; k++) {
@@ -124,12 +124,12 @@ function modifyQuantity() {
  */
 
 function deleteProduct() {
-  let deleteClick = document.querySelectorAll(".deleteItem");  
+  const deleteClick = document.querySelectorAll(".deleteItem");  
   for (let i = 0; i < deleteClick.length; i++) {
     deleteClick[i].addEventListener("click", function(e) {
-      let article = deleteClick[i].closest("article");
-      let dataId = article.getAttribute("data-id");
-      let dataColor = article.getAttribute("data-color");    
+      const article = deleteClick[i].closest("article");
+      const dataId = article.getAttribute("data-id");
+      const dataColor = article.getAttribute("data-color");    
       for (let j = 0; j < storedCart.length; j++) {         
         if (storedCart[j][0] == dataId) {
           for (let k = 1; k <= (storedCart[j].length - 1)/2; k++) {
@@ -208,17 +208,17 @@ async function total() {
   }
 }
   
-let firstName = document.getElementById("firstName");
-let lastName = document.getElementById("lastName");
-let address = document.getElementById("address");
-let city = document.getElementById("city");
-let email = document.getElementById("email");
-let orderCommand = document.getElementById("order");
-let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
-let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
-let addressErrorMsg = document.getElementById("addressErrorMsg");
-let cityErrorMsg = document.getElementById("cityErrorMsg");
-let emailErrorMsg = document.getElementById("emailErrorMsg");
+const firstName = document.getElementById("firstName");
+const lastName = document.getElementById("lastName");
+const address = document.getElementById("address");
+const city = document.getElementById("city");
+const email = document.getElementById("email");
+const orderCommand = document.getElementById("order");
+const firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+const lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
+const addressErrorMsg = document.getElementById("addressErrorMsg");
+const cityErrorMsg = document.getElementById("cityErrorMsg");
+const emailErrorMsg = document.getElementById("emailErrorMsg");
 
 const regExpNameCity = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]{2,40}$/;
 const regExpAddress = /[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð0-9 ,.'-]{5,50}$/;
@@ -349,6 +349,18 @@ function createContact() {
 }
 
 /**
+ * Create an array of products
+ * @param none
+ * @return {undefined}
+ */
+
+function createProductsArray() {
+  for (let item of storedCart) {
+    productsArray.push(item[0]);
+  }
+}
+
+/**
  * Make a post request on the API
  * Retrieve the command ID
  * Redirect the user to the confirmation page by passing the order id in the url
@@ -359,42 +371,34 @@ function createContact() {
 function command() {
   orderCommand.addEventListener("click", function(e) {
     e.preventDefault();
-    if (storedCart == null) {
-      titre1.innerHTML = "Votre panier est vide !"
-    } else {
-      for (let item of storedCart) {
-        if (item.length > 10) {
-          productsArray.push(item);
-        }  
+    if (inputForm1*inputForm2*inputForm3*inputForm4*inputForm5 == 1) {      
+      createContact();
+      createProductsArray();      
+      const init = {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contact: contact,
+          products: productsArray,
+        })
       }
-      if (inputForm1*inputForm2*inputForm3*inputForm4*inputForm5 == 1) {
-        createContact();        
-        let init = {
-          method: "POST",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            contact: contact,
-            products: productsArray,
-          })
-        }
-        fetch("http://localhost:3000/api/products/order", init)
-          .then(function(res) {
-            if (res.ok) {
-              return res.json();
-            }
-          })
-          .then(function(value) {
-            localStorage.clear();
-            window.location.assign("confirmation.html?id=" + value.orderId);
-          })
-          .catch(function(err) {
-            console.log(err);
-          })     
-      }
-    }
+      fetch("http://localhost:3000/api/products/order", init)
+        .then(function(res) {
+          if (res.ok) {
+            return res.json();
+          }
+        })
+        .then(function(value) {
+          localStorage.clear();
+          window.location.assign("confirmation.html?id=" + value.orderId);
+        })
+        .catch(function(err) {
+          console.log(err);
+        })     
+    }    
   })
 }
 

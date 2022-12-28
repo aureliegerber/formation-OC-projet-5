@@ -1,10 +1,10 @@
-let url = new URLSearchParams(window.location.search);
-let productId = url.get("id");
-let itemImg = document.querySelector(".item__img");
-let itemContentTitle = document.getElementById("title");
-let itemContentPrice = document.getElementById("price");
-let itemContentDescription = document.getElementById("description");
-let itemContentSettingsColor = document.getElementById("colors");
+const url = new URLSearchParams(window.location.search);
+const productId = url.get("id");
+const itemImg = document.querySelector(".item__img");
+const itemContentTitle = document.getElementById("title");
+const itemContentPrice = document.getElementById("price");
+const itemContentDescription = document.getElementById("description");
+const itemContentSettingsColor = document.getElementById("colors");
 
 /**
  * Display product details
