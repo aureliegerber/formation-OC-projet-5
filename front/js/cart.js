@@ -188,11 +188,9 @@ async function total() {
             for (let j = 0; j < value.length; j++) {
               if (value[j]._id == storedCart[i][0]) {
                 for (let k = 1; k <= (storedCart[i].length - 1)/2; k++) {
-                  productTotalQuantity += parseInt(storedCart[i][2*k - 1]);
-                  console.log(productTotalQuantity);                  
+                  productTotalQuantity += parseInt(storedCart[i][2*k - 1]);                                   
                 };                
-                productTotalPrice = productTotalQuantity*(value[j].price);
-                console.log(productTotalPrice);                       
+                productTotalPrice = productTotalQuantity*(value[j].price);                                      
               }              
             }            
           })
