@@ -35,7 +35,12 @@ fetch("http://localhost:3000/api/products")
 
 /**
  * Display the product details in the DOM
- * @param {array}
+ * @param {array} response - Response of the API
+ * @param {string} array[]._id
+ * @param {string} array[].imageUrl
+ * @param {string} array[].altTxt
+ * @param {string} array[].name
+ * @param {number} array[].price
  * @return {undefined}
  */
 
@@ -126,7 +131,7 @@ function modifyQuantity() {
 function deleteProduct() {
   const deleteClick = document.querySelectorAll(".deleteItem");  
   for (let i = 0; i < deleteClick.length; i++) {
-    deleteClick[i].addEventListener("click", function(e) {
+    deleteClick[i].addEventListener("click", function() {
       const article = deleteClick[i].closest("article");
       const dataId = article.getAttribute("data-id");
       const dataColor = article.getAttribute("data-color");    
@@ -189,7 +194,7 @@ async function total() {
               if (value[j]._id == storedCart[i][0]) {
                 for (let k = 1; k <= (storedCart[i].length - 1)/2; k++) {
                   productTotalQuantity += parseInt(storedCart[i][2*k - 1]);                                   
-                };                
+                }         
                 productTotalPrice = productTotalQuantity*(value[j].price);                                      
               }              
             }            
@@ -401,4 +406,3 @@ function command() {
 }
 
 command();
-

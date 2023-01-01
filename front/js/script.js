@@ -2,7 +2,12 @@ const productItems = document.getElementById("items");
 
 /**
  * Display products on the homepage
- * @param {array}
+ * @param {array} response - Response of the API
+ * @param {string} array[]._id
+ * @param {string} array[].imageUrl
+ * @param {string} array[].altTxt
+ * @param {string} array[].name
+ * @param {string} array[].description
  * @return {undefined}
  */
 
@@ -21,8 +26,8 @@ function displayProducts(array) {
 
 /**
  * Retrieve data from the api and call the displayProducts function
- * @param {url}
- * @return {promise}
+ * @param {string} url - Url of the API
+ * @return {undefined}
  */
 
 fetch("http://localhost:3000/api/products")
@@ -35,6 +40,5 @@ fetch("http://localhost:3000/api/products")
         displayProducts(value);                    
     })
     .catch(function(err) {
-        console.log("error")
+        console.log(err);
     });
-

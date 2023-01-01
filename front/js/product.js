@@ -8,7 +8,14 @@ const itemContentSettingsColor = document.getElementById("colors");
 
 /**
  * Display product details
- * @param {array}
+ * @param {array} response - Response of the API
+ * @param {string} array[]._id
+ * @param {string} array[].imageUrl
+ * @param {string} array[].altTxt
+ * @param {string} array[].name
+ * @param {number} array[].price
+ * @param {string} array[].description
+ * @param {array} array[].color
  * @return {undefined}
  */
 
@@ -29,8 +36,8 @@ function displayProduct(array) {
 
 /**
  * Retrieve data from the api and call the displayProduct function
- * @param {url}
- * @return {promise}
+ * @param {string} url - Url of the API
+ * @return {undefined}
  */
 
 fetch("http://localhost:3000/api/products")
