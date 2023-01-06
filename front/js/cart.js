@@ -17,16 +17,11 @@ fetch("http://localhost:3000/api/products")
         return res.json();
       }
     })
-    .then(function(value) {
-      if (storedCart == null) {
-        titre1.innerHTML = "Votre panier est vide !";
-        total();
-    } else {      
+    .then(function(value) {  
       displayCart(value);
       modifyQuantity();
       deleteProduct();
-      total();
-    }
+      total();    
     })
     .catch(function(err) {
         console.log(err);
@@ -85,7 +80,7 @@ function displayCart(array) {
 
 function modifyLocalStorage() {
   localStorage.clear();
-  localStorage.setItem("cart", JSON.stringify(storedCart));
+  localStorage.setItem("cart", JSON.stringify(storedCart));  
 }
 
 /**
@@ -146,8 +141,9 @@ function deleteProduct() {
         }
       }
       cleanCart();
-      modifyLocalStorage();      
-      total();
+      modifyLocalStorage();
+      location.reload();
+      total();        
     })    
   }
 }
@@ -374,34 +370,40 @@ function createProductsArray() {
 function command() {
   orderCommand.addEventListener("click", function(e) {
     e.preventDefault();
-    if (inputForm1*inputForm2*inputForm3*inputForm4*inputForm5 == 1) {      
-      createContact();
-      createProductsArray();      
-      const init = {
-        method: "POST",
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contact: contact,
-          products: productsArray,
-        })
-      }
-      fetch("http://localhost:3000/api/products/order", init)
-        .then(function(res) {
-          if (res.ok) {
-            return res.json();
-          }
-        })
-        .then(function(value) {
-          localStorage.clear();
-          window.location.assign("confirmation.html?id=" + value.orderId);
-        })
-        .catch(function(err) {
-          console.log(err);
-        })     
-    }    
+    if (storedCart !== null && storedCart.length !== 0) {
+      if (inputForm1*inputForm2*inputForm3*inputForm4*inputForm5 == 1) {      
+        createContact();
+        createProductsArray();      
+        const init = {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contact: contact,
+            products: productsArray,
+          })
+        }
+        fetch("http://localhost:3000/api/products/order", init)
+          .then(function(res) {
+            if (res.ok) {
+              return res.json();
+            }
+          })
+          .then(function(value) {
+            localStorage.clear();
+            window.location.assign("confirmation.html?id=" + value.orderId);
+          })
+          .catch(function(err) {
+            console.log(err);
+          })     
+      } else {
+        alert("Veuillez remplir correctement le formulaire")
+      }      
+    } else {
+      titre1.innerHTML = "Votre panier est vide !";
+    }
   })
 }
 
