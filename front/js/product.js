@@ -21,7 +21,7 @@ const itemContentSettingsColor = document.getElementById("colors");
 
 function displayProduct(array) {
     for (let i = 0; i < array.length; i++) {
-        if (array[i]._id === productId) {
+        if (array[i]._id == productId) {
             itemImg.innerHTML = `<img src="${array[i].imageUrl}" alt="${array[i].altTxt}">`;
             itemContentTitle.textContent = array[i].name;
             itemContentPrice.textContent = array[i].price;
