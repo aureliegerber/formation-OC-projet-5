@@ -142,8 +142,7 @@ function deleteProduct() {
       }
       cleanCart();
       modifyLocalStorage();
-      location.reload();
-      total();        
+      total();          
     })    
   }
 }
@@ -159,6 +158,9 @@ function cleanCart() {
     if (storedCart[i].length == 1) {
       storedCart.splice(i, 1);
     }
+  }
+  if (storedCart.length == 0) {
+    location.reload();
   }
 }
 
