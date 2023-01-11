@@ -8,46 +8,42 @@ const itemContentSettingsColor = document.getElementById("colors");
 
 /**
  * Display product details
- * @param {array} response - Response of the API
- * @param {string} array[]._id
- * @param {string} array[].imageUrl
- * @param {string} array[].altTxt
- * @param {string} array[].name
- * @param {number} array[].price
- * @param {string} array[].description
- * @param {array} array[].color
+ * @param {object} response - Response of the API
+ * @param {string} object._id
+ * @param {string} object.imageUrl
+ * @param {string} object.altTxt
+ * @param {string} object.name
+ * @param {number} object.price
+ * @param {string} object.description
+ * @param {array} object.color
  * @return {undefined}
  */
 
-function displayProduct(array) {
-    for (let i = 0; i < array.length; i++) {
-        if (array[i]._id == productId) {
-            itemImg.innerHTML = `<img src="${array[i].imageUrl}" alt="${array[i].altTxt}">`;
-            itemContentTitle.textContent = array[i].name;
-            itemContentPrice.textContent = array[i].price;
-            itemContentDescription.textContent = array[i].description;
-            for (let j = 0; j < array[i].colors.length; j++) {
-                itemContentSettingsColor.innerHTML += `
-                <option value="${array[i].colors[j]}">${array[i].colors[j]}</option>`
-            }             
-        }
-    }
+function displayProduct(object) {
+    itemImg.innerHTML = `<img src="${object.imageUrl}" alt="${object.altTxt}">`;
+    itemContentTitle.textContent = object.name;
+    itemContentPrice.textContent = object.price;
+    itemContentDescription.textContent = object.description;
+    for (let i = 0; i < object.colors.length; i++) {
+        itemContentSettingsColor.innerHTML += `
+        <option value="${object.colors[i]}">${object.colors[i]}</option>`
+    }  
 }
 
 /**
- * Retrieve data from the api and call the displayProduct function
+ * Retrieve data from the api from one product and call the displayProduct function
  * @param {string} url - Url of the API
  * @return {undefined}
  */
 
-fetch("http://localhost:3000/api/products")
+fetch(`http://localhost:3000/api/products/${productId}`)
     .then(function(res) {
         if (res.ok) {
-            return res.json();
+            return res.json();            
         }
     })
     .then(function(value) {
-        displayProduct(value);                     
+        displayProduct(value);                         
     })
     .catch(function(err) {
         console.log(err);
