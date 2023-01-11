@@ -11,22 +11,25 @@ const titre1 = document.querySelector("h1");
  * @return {undefined}
  */
 
-fetch("http://localhost:3000/api/products")
-    .then(function(res) {
-      if (res.ok) {
-        return res.json();
-      }
-    })
-    .then(function(value) {  
-      displayCart(value);
-      modifyQuantity();
-      deleteProduct();
-      total();    
-    })
-    .catch(function(err) {
+if (storedCart.length == 0) {
+  titre1.innerHTML = "Votre panier est vide !"
+} else {
+  fetch("http://localhost:3000/api/products")
+      .then(function(res) {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then(function(value) {
+        displayCart(value);
+        total(value);   
+        modifyQuantity();
+        deleteProduct();
+      })
+      .catch(function(err) {
         console.log(err);
-    });
-
+      });
+}
 
 /**
  * Display the product details in the DOM
@@ -84,6 +87,17 @@ function modifyLocalStorage() {
 }
 
 /**
+ * Retrieve from the page the price of the item on which the event took place
+ * @param {object} object onto which the event was dispatched
+ * @return {number} price - price of the product
+ */
+
+function getEventPrice(e) {
+  const stringOfPrice = e.parentElement.parentElement.parentElement.firstElementChild.lastElementChild.innerHTML;
+  return parseInt(stringOfPrice.split(' ')[0]);
+}
+
+/**
  * Modify the quantity of a product and modify the localstorage
  * @param none
  * @return {undefined}
@@ -93,18 +107,27 @@ function modifyQuantity() {
   const inputQuantity = document.querySelectorAll(".itemQuantity");  
   for (let i = 0; i < inputQuantity.length; i++) {
     inputQuantity[i].addEventListener("change", function(e) {
+      let totalQuantity = parseInt(document.getElementById("totalQuantity").innerHTML);
+      let totalPrice = parseInt(document.getElementById("totalPrice").innerHTML);
+      console.log(typeof(e.target));  
       const newQuantity = e.target.value;
       const article = inputQuantity[i].closest("article");
+      console.log(article);
       const dataId = article.getAttribute("data-id");
-      const dataColor = article.getAttribute("data-color");    
+      const dataColor = article.getAttribute("data-color");      
+      const price = getEventPrice(e.target);
+      console.log(price);
       for (let j = 0; j < storedCart.length; j++) {
         if (storedCart[j][0] == dataId) {
           for (let k = 1; k <= (storedCart[j].length - 1)/2; k++) {
             if (storedCart[j][2*k] == dataColor) {
-              if (newQuantity <= 100) {
+              if (newQuantity <= 100) {                
+                totalQuantity = totalQuantity - parseInt(storedCart[j][2*k - 1]) + parseInt(newQuantity);                
+                totalQuantitySpan.innerHTML = totalQuantity;
+                totalPrice = totalPrice - storedCart[j][2*k -1]*price + newQuantity*price;                
+                totalPriceSpan.innerHTML = totalPrice;                
                 storedCart[j][2*k - 1] = newQuantity;
-                modifyLocalStorage();
-                total();
+                modifyLocalStorage();                             
               } else {
                 alert("La quantité totale d'un article ne doit pas dépasser 100");
                 e.target.value = storedCart[j][2*k - 1];
@@ -112,9 +135,9 @@ function modifyQuantity() {
             }
           }
         }
-      }      
+      }
     })
-  }
+  }  
 }
 
 /**
@@ -126,7 +149,11 @@ function modifyQuantity() {
 function deleteProduct() {
   const deleteClick = document.querySelectorAll(".deleteItem");  
   for (let i = 0; i < deleteClick.length; i++) {
-    deleteClick[i].addEventListener("click", function() {
+    deleteClick[i].addEventListener("click", function(e) {      
+      let totalQuantity = parseInt(document.getElementById("totalQuantity").innerHTML);
+      let totalPrice = parseInt(document.getElementById("totalPrice").innerHTML);
+      const price = getEventPrice(e.target);
+      console.log(price);     
       const article = deleteClick[i].closest("article");
       const dataId = article.getAttribute("data-id");
       const dataColor = article.getAttribute("data-color");    
@@ -134,15 +161,18 @@ function deleteProduct() {
         if (storedCart[j][0] == dataId) {
           for (let k = 1; k <= (storedCart[j].length - 1)/2; k++) {
             if (storedCart[j][2*k] == dataColor) {
-              storedCart[j].splice(2*k - 1, 2);
+              totalQuantity = parseInt(totalQuantity - storedCart[j][2*k - 1]);
+              totalQuantitySpan.innerHTML = totalQuantity;
+              totalPrice = totalPrice - storedCart[j][2*k - 1]*price;
+              totalPriceSpan.innerHTML = totalPrice;
+              storedCart[j].splice(2*k - 1, 2);                            
               article.remove();              
             }
           }
         }
       }
       cleanCart();
-      modifyLocalStorage();
-      total();          
+      modifyLocalStorage();              
     })    
   }
 }
@@ -171,44 +201,27 @@ function cleanCart() {
  * @return {undefined}
  */
 
-async function total() {
+function total(value) {
   let totalQuantity = 0;
   let totalPrice = 0;
-  if (storedCart == null) {
-    totalQuantitySpan.innerHTML = 0;
-    totalPriceSpan.innerHTML = 0;
-  } else {
-    for (let i = 0; i < storedCart.length; i++) {
-      let productTotalQuantity = 0;
-      let productTotalPrice = 0;
-      await fetch("http://localhost:3000/api/products")
-          .then(function(res) {
-            if (res.ok) {
-                return res.json();
-            }
-          })
-          .then(function(value) {                
-            for (let j = 0; j < value.length; j++) {
-              if (value[j]._id == storedCart[i][0]) {
-                for (let k = 1; k <= (storedCart[i].length - 1)/2; k++) {
-                  productTotalQuantity += parseInt(storedCart[i][2*k - 1]);                                   
-                }         
-                productTotalPrice = productTotalQuantity*(value[j].price);                                      
-              }              
-            }            
-          })
-          .catch(function(err) {
-            console.log(err);
-          });
-
-          totalQuantity += productTotalQuantity;                         
-          totalPrice += productTotalPrice;              
-          totalQuantitySpan.innerHTML = totalQuantity;
-          totalPriceSpan.innerHTML = totalPrice;
-      }  
-  }
+  for (let i = 0; i < storedCart.length; i++) {
+    let productTotalQuantity = 0;
+    let productTotalPrice = 0;
+    for (let j = 0; j < value.length; j++) {
+      if (value[j]._id == storedCart[i][0]) {
+        for (let k = 1; k <= (storedCart[i].length - 1)/2; k++) {
+          productTotalQuantity += parseInt(storedCart[i][2*k - 1]);                                   
+        }         
+        productTotalPrice = productTotalQuantity*(value[j].price);                                      
+      }              
+    }            
+    totalQuantity += productTotalQuantity;                         
+    totalPrice += productTotalPrice;              
+    totalQuantitySpan.innerHTML = totalQuantity;
+    totalPriceSpan.innerHTML = totalPrice;
+  }  
 }
-  
+
 const firstName = document.getElementById("firstName");
 const lastName = document.getElementById("lastName");
 const address = document.getElementById("address");
@@ -404,7 +417,7 @@ function command() {
         alert("Veuillez remplir correctement le formulaire")
       }      
     } else {
-      titre1.innerHTML = "Votre panier est vide !";
+      alert("Votre panier est vide");
     }
   })
 }
