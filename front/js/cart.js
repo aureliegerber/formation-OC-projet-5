@@ -94,7 +94,7 @@ function modifyLocalStorage() {
 
 function getEventPrice(e) {
   const stringOfPrice = e.parentElement.parentElement.parentElement.firstElementChild.lastElementChild.innerHTML;
-  return parseInt(stringOfPrice.split(' ')[0]);
+  return parseInt(stringOfPrice);
 }
 
 /**
