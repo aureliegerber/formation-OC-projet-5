@@ -6,30 +6,35 @@ const productsArray = [];
 const titre1 = document.querySelector("h1");
 
 /**
- * Contact the API and start the total, displayCart, modifyQuantity and deleteProduct functions
+ * Contact the API and start the displayCart, total, modifyQuantity and deleteProduct functions
  * @param {url}
  * @return {undefined}
  */
 
-if (storedCart.length == 0) {
-  titre1.innerHTML = "Votre panier est vide !"
-} else {
-  fetch("http://localhost:3000/api/products")
-      .then(function(res) {
-        if (res.ok) {
-          return res.json();
-        }
-      })
-      .then(function(value) {
-        displayCart(value);
-        total(value);   
-        modifyQuantity();
-        deleteProduct();
-      })
-      .catch(function(err) {
-        console.log(err);
-      });
+function getProduct() {  
+  if (storedCart != null) {
+    if (storedCart.length != 0) {
+      fetch("http://localhost:3000/api/products")
+          .then(function(res) {
+            if (res.ok) {
+              return res.json();
+            }
+          })
+          .then(function(value) {
+            displayCart(value);
+            total(value);   
+            modifyQuantity();
+            deleteProduct();
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+    }
+  }
 }
+
+getProduct();
+
 
 /**
  * Display the product details in the DOM
