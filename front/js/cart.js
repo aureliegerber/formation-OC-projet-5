@@ -113,15 +113,12 @@ function modifyQuantity() {
   for (let i = 0; i < inputQuantity.length; i++) {
     inputQuantity[i].addEventListener("change", function(e) {
       let totalQuantity = parseInt(document.getElementById("totalQuantity").innerHTML);
-      let totalPrice = parseInt(document.getElementById("totalPrice").innerHTML);
-      console.log(typeof(e.target));  
+      let totalPrice = parseInt(document.getElementById("totalPrice").innerHTML);       
       const newQuantity = e.target.value;
-      const article = inputQuantity[i].closest("article");
-      console.log(article);
+      const article = inputQuantity[i].closest("article");      
       const dataId = article.getAttribute("data-id");
       const dataColor = article.getAttribute("data-color");      
-      const price = getEventPrice(e.target);
-      console.log(price);
+      const price = getEventPrice(e.target);      
       for (let j = 0; j < storedCart.length; j++) {
         if (storedCart[j][0] == dataId) {
           for (let k = 1; k <= (storedCart[j].length - 1)/2; k++) {
@@ -157,8 +154,7 @@ function deleteProduct() {
     deleteClick[i].addEventListener("click", function(e) {      
       let totalQuantity = parseInt(document.getElementById("totalQuantity").innerHTML);
       let totalPrice = parseInt(document.getElementById("totalPrice").innerHTML);
-      const price = getEventPrice(e.target);
-      console.log(price);     
+      const price = getEventPrice(e.target);        
       const article = deleteClick[i].closest("article");
       const dataId = article.getAttribute("data-id");
       const dataColor = article.getAttribute("data-color");    
