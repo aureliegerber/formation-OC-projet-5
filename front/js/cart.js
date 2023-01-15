@@ -4,6 +4,7 @@ const totalQuantitySpan = document.getElementById("totalQuantity");
 const totalPriceSpan = document.getElementById("totalPrice");
 const productsArray = [];
 const titre1 = document.querySelector("h1");
+let contact;
 
 /**
  * Contact the API and start the displayCart, total, modifyQuantity and deleteProduct functions
@@ -37,7 +38,7 @@ getProduct();
 
 
 /**
- * Display the product details in the DOM
+ * Display the products of the localstorage in the page
  * @param {array} response - Response of the API
  * @param {string} array[]._id
  * @param {string} array[].imageUrl
@@ -115,7 +116,7 @@ function modifyQuantity() {
       let totalQuantity = parseInt(document.getElementById("totalQuantity").innerHTML);
       let totalPrice = parseInt(document.getElementById("totalPrice").innerHTML);       
       const newQuantity = e.target.value;
-      const article = inputQuantity[i].closest("article");      
+      const article = inputQuantity[i].closest("article"); 
       const dataId = article.getAttribute("data-id");
       const dataColor = article.getAttribute("data-color");      
       const price = getEventPrice(e.target);      
@@ -126,7 +127,7 @@ function modifyQuantity() {
               if (newQuantity <= 100) {                
                 totalQuantity = totalQuantity - parseInt(storedCart[j][2*k - 1]) + parseInt(newQuantity);                
                 totalQuantitySpan.innerHTML = totalQuantity;
-                totalPrice = totalPrice - storedCart[j][2*k -1]*price + newQuantity*price;                
+                totalPrice = totalPrice - storedCart[j][2*k - 1]*price + newQuantity*price;                
                 totalPriceSpan.innerHTML = totalPrice;                
                 storedCart[j][2*k - 1] = newQuantity;
                 modifyLocalStorage();                             
@@ -195,7 +196,6 @@ function cleanCart() {
   }
 }
 
-
 /**
  * Calculate total quantity and total price and display in the DOM
  * @param none
@@ -235,9 +235,9 @@ const addressErrorMsg = document.getElementById("addressErrorMsg");
 const cityErrorMsg = document.getElementById("cityErrorMsg");
 const emailErrorMsg = document.getElementById("emailErrorMsg");
 
-const regExpNameCity = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]{2,40}$/;
+const regExpNameCity = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð'-]{2,40}$/;
 const regExpAddress = /[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð0-9 ,.'-]{5,50}$/;
-const regExpEmail = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/;
+const regExpEmail = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9-_]+[.]{1}[a-z]{2,10}$/;
 
 let inputForm1 = 0;
 let inputForm2 = 0;
@@ -345,8 +345,6 @@ function emailIsValid() {
 
 emailIsValid();
 
-let contact;
-
 /**
  * Create a contact object
  * @param none
@@ -386,7 +384,7 @@ function createProductsArray() {
 function command() {
   orderCommand.addEventListener("click", function(e) {
     e.preventDefault();
-    if (storedCart !== null && storedCart.length !== 0) {
+    if (storedCart != null && storedCart.length != 0) {
       if (inputForm1*inputForm2*inputForm3*inputForm4*inputForm5 == 1) {      
         createContact();
         createProductsArray();      
