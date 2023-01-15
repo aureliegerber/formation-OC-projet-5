@@ -3,7 +3,6 @@ const cartItems = document.getElementById("cart__items");
 const totalQuantitySpan = document.getElementById("totalQuantity");
 const totalPriceSpan = document.getElementById("totalPrice");
 const productsArray = [];
-const titre1 = document.querySelector("h1");
 let contact;
 
 /**
