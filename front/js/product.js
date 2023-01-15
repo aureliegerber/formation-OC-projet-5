@@ -5,6 +5,9 @@ const itemContentTitle = document.getElementById("title");
 const itemContentPrice = document.getElementById("price");
 const itemContentDescription = document.getElementById("description");
 const itemContentSettingsColor = document.getElementById("colors");
+let cart = [];
+let storedCart = JSON.parse(localStorage.getItem("cart"));
+const cartButton = document.getElementById("addToCart");
 
 /**
  * Display product details
@@ -49,11 +52,8 @@ fetch(`http://localhost:3000/api/products/${productId}`)
         console.log(err);
     });
 
-let cart = [];
-let storedCart = JSON.parse(localStorage.getItem("cart"));
-
 /**
- * Check that the color and quantity have been chosen
+ * Check that the color and quantity between 1 and 100 have been chosen
  * @param {string} color
  * @param {number} quantity
  * @return {undefined}
@@ -63,10 +63,10 @@ function checkInput(color, quantity) {
     if (color == "" && quantity == 0) {
         alert("Choisir une couleur et saisir une quantité");
     }
-    if (color == "" && quantity !== 0) {
+    if (color == "" && quantity != 0) {
         alert("Choisir une couleur");
     }
-    if (color !== "" && quantity == 0) {
+    if (color != "" && quantity == 0) {
         alert("Saisir une quantité");
     }
     if (quantity > 100) {
@@ -81,7 +81,7 @@ function checkInput(color, quantity) {
  */
 
 function fillCart() {
-    if (storedCart !== null) {
+    if (storedCart != null) {
         cart = storedCart;
     }
 
@@ -91,14 +91,14 @@ function fillCart() {
 
     checkInput(productColor, productQuantity);    
     
-    if (productColor !== "" && productQuantity > 0 && productQuantity <= 100) {
+    if (productColor != "" && productQuantity > 0 && productQuantity <= 100) {
         if (cart.length == 0) {
             cart[0] = [productId, productQuantity, productColor];
         } else {
             for (let i = 0; i < cart.length; i++) {
                 if (cart[i][0] == productId) {
                     boolean = true;
-                    if (cart[i].indexOf(productColor) !== -1) {
+                    if (cart[i].indexOf(productColor) != -1) {
                         let j = cart[i].indexOf(productColor);
                         if (cart[i][j - 1] + productQuantity <= 100) {
                             cart[i][j - 1] += productQuantity;
@@ -122,5 +122,4 @@ function fillCart() {
     }
 }
 
-let cartButton = document.getElementById("addToCart");
 cartButton.addEventListener("click", fillCart);
