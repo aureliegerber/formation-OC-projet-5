@@ -128,7 +128,7 @@ function modifyQuantity() {
                 totalQuantitySpan.innerHTML = totalQuantity;
                 totalPrice = totalPrice - storedCart[j][2*k - 1]*price + newQuantity*price;                
                 totalPriceSpan.innerHTML = totalPrice;                
-                storedCart[j][2*k - 1] = newQuantity;
+                storedCart[j][2*k - 1] = parseInt(newQuantity);
                 modifyLocalStorage();                             
               } else {
                 alert("La quantité totale d'un article ne doit pas dépasser 100");

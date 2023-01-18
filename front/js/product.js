@@ -100,8 +100,8 @@ function fillCart() {
                     boolean = true;
                     if (cart[i].indexOf(productColor) != -1) {
                         let j = cart[i].indexOf(productColor);
-                        if (cart[i][j - 1] + productQuantity <= 100) {
-                            cart[i][j - 1] += productQuantity;
+                        if (cart[i][j - 1] + parseInt(productQuantity) <= 100) {
+                            cart[i][j - 1] += parseInt(productQuantity);
                         } else {
                             alert("La quantité totale d'un article ne doit pas dépasser 100");
                             return;
